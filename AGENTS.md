@@ -6,4 +6,6 @@
 - Treat every cross-system interface as versioned data with an explicit claim boundary.
 - Never let information, confidence, or a prior decision silently become authority for another system.
 - Keep proposed systems visibly distinct from registered systems.
+- Keep a federation trial's implementation gate closed until its frozen
+  protocol review is merged and blocking ambiguities are resolved.
 - Before finishing a change, run `python -m pytest`, `python -m ruff check .`, and `python -m ruff format --check .` from the project environment.

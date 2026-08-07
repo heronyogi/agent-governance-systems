@@ -1,0 +1,82 @@
+{
+  "manifest_schema": "0.1.0",
+  "trial_id": "FET-001",
+  "trial_version": "0.1.0",
+  "state": "review-frozen",
+  "frozen_on": "2026-08-07",
+  "baseline": {
+    "tag": "federation-adoption-v0.1.0",
+    "repositories": [
+      {
+        "name": "agent-governance-systems",
+        "commit": "bfe416d0d91e5fbad5459a888d8d277ae7099b85"
+      },
+      {
+        "name": "agent-context-proof",
+        "commit": "7fb35d3ff9ef31ffec46672510fdf87795c1de78"
+      },
+      {
+        "name": "agent-authority-benchmark",
+        "commit": "2506171db41a804f6c4418f0be607f7747d7420f"
+      }
+    ]
+  },
+  "implementation_gate": "closed",
+  "artifacts": [
+    {
+      "path": "trials/FET-001/README.md",
+      "role": "review-guide",
+      "sha256": "87d013539c5bb98a4f1dcb9b44a605a664ab5cfd31c3f99713da9cca32b786ec"
+    },
+    {
+      "path": "trials/FET-001/protocol.v0.1.md",
+      "role": "normative-protocol",
+      "sha256": "f7fb8dadee6af90ddda8fcbf8116e4fab789f10d3c5944366696b19a92425e10"
+    },
+    {
+      "path": "trials/FET-001/protocol.v0.1.json",
+      "role": "protocol-mirror",
+      "sha256": "597341505e8098e46c07e9291220cf3fd20e4890e806a014ffa97c258b585bcb"
+    },
+    {
+      "path": "trials/FET-001/schemas/context-envelope.v0.1.schema.json",
+      "role": "schema",
+      "sha256": "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d"
+    },
+    {
+      "path": "trials/FET-001/schemas/case.v0.1.schema.json",
+      "role": "schema",
+      "sha256": "84995fb38b4b67a3e563075ff684637d888fa372a10d11aea39f2684f722af5f"
+    },
+    {
+      "path": "trials/FET-001/schemas/mutation.v0.1.schema.json",
+      "role": "schema",
+      "sha256": "b62bea7b98f1ac54f4403903fa247afc2c26b7ce3d97bda5b13e88f5c225f3ec"
+    },
+    {
+      "path": "trials/FET-001/schemas/report.v0.1.schema.json",
+      "role": "schema",
+      "sha256": "3a32868bbba96532c50cde047395f557b4d6fb90f3d20d14f82382cb5446d7f4"
+    },
+    {
+      "path": "trials/FET-001/schemas/protocol.v0.1.schema.json",
+      "role": "schema",
+      "sha256": "e39445516d6f6eceb814a7eb43b4b8a77ec1dcb7768cf039cb1b8c4bcc7d43ec"
+    },
+    {
+      "path": "trials/FET-001/schemas/freeze-manifest.v0.1.schema.json",
+      "role": "schema",
+      "sha256": "a1e69b26d1112a12157f268726412d7a3bdd74b5aa96581b6daa2afbb3d7fcba"
+    },
+    {
+      "path": "trials/FET-001/fixtures/development-cases.v0.1.json",
+      "role": "development-fixtures",
+      "sha256": "17be93b14c76a5b190d062c1cc28f6ede6dbb66e27cc35b327dad6f264578002"
+    },
+    {
+      "path": "trials/FET-001/fixtures/mutations.v0.1.json",
+      "role": "mutation-catalog",
+      "sha256": "6bfed72400d6e69205474fbc64dd84f9d9d48e207e93e9829abde21fa203da11"
+    }
+  ]
+}
