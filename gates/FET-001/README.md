@@ -1,4 +1,6 @@
-# FET-001 implementation gate
+# FET-001 gate records
+
+## Implementation gate
 
 ## Decision
 
@@ -8,8 +10,7 @@ pull requests:
 - a producer track in Agent Context Proof; and
 - a consumer track in Agent Authority Benchmark.
 
-The gate becomes effective only when its catalog change is merged. Until then,
-it is a candidate decision record.
+The implementation gate became effective when its catalog change was merged.
 
 ## Evidence
 
@@ -51,6 +52,53 @@ This gate does not authorize:
 - modification of the frozen protocol; or
 - development-trial execution.
 
-The next gate remains closed until both implementations are merged, compatible,
-fully tested against the public cases and mutations, and bound by a new catalog
-decision record.
+Those conditions are now bound by the separate development-execution record.
+
+## Development-execution gate
+
+The development-execution gate authorizes one narrow class of evidence work:
+offline execution of the eight frozen public development cases and ten active
+mutations against the exact merged producer and consumer implementations.
+The gate becomes effective only when its catalog change is merged. Until then,
+it is a candidate decision record.
+
+The record binds:
+
+- implementation-gate PR #3, merge commit, record digest, and post-merge CI;
+- producer PR #4, source and merge commits, source-manifest digest, and
+  post-merge CI;
+- consumer PR #2, source and merge commits, source-manifest digest, and
+  post-merge CI;
+- the byte-identical Context-envelope schema used by both systems;
+- the frozen public cases, mutations, and report schema; and
+- both implementation PR review surfaces at gate evaluation.
+
+Both implementation PRs had zero conversation comments, submitted reviews,
+review threads, unresolved threads, or change requests. Independent review is
+therefore **not claimed**. The acceptance basis is the repository owner's two
+merges with no publicly recorded blockers.
+
+### Authorized execution
+
+Execution must use isolated workspaces at the bound merge commits, remain
+offline and synthetic, and exchange only the versioned JSON envelope across
+the system boundary. It must run a clean preflight, execute all eight cases,
+prove activation for all ten mutations, observe effects outside implementation
+prose, and emit the separated frozen report format.
+
+The producer's public export covers three representative Context states:
+`FET001-DEV-001`, `FET001-DEV-003`, and `FET001-DEV-008`. Consumer evaluation
+covers all eight frozen cases. That asymmetry must remain visible in the report
+rather than being described as eight end-to-end producer exports.
+
+### Still not authorized
+
+This gate does not authorize live models, provider APIs, networked runtime
+tools, production or personal data, real external effects, blind or sealed
+cases, modification of the frozen packet or bound implementations, or an
+experimental, safety, certification, or production claim.
+
+Any supported result is only public development conformance within the exact
+commits, cases, mutations, and confirmed observation scope. Independent
+evaluation remains closed pending a separately governed blind case set,
+independent review, and another gate record. Live evaluation remains closed.

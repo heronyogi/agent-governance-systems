@@ -33,10 +33,12 @@ is a merged, frozen protocol. It specifies a proposed Context-to-Authority
 transport envelope, eight public development cases, ten mutations, separated
 reporting, and a content-addressed review packet.
 
-FET-001 has no adapter, experimental result, blind case set, or live-model run.
-Its [implementation-gate record](gates/FET-001/README.md) opens only separate,
-offline producer and consumer implementation pull requests. Development-trial
-execution and live evaluation remain closed.
+FET-001 now has separately merged offline producer and consumer
+implementations. Its [gate records](gates/FET-001/README.md) bind those exact
+commits and open only execution of the frozen public development cases and
+active mutations. No development report, independent or blind case set,
+experimental result, or live-model run exists yet. Independent and live
+evaluation remain closed.
 
 ## Federation rules
 

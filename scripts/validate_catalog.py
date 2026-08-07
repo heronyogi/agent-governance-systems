@@ -417,6 +417,239 @@ def validate_fet001_implementation_gate(
     return sorted(set(errors))
 
 
+def validate_fet001_development_execution_gate(root: Path) -> list[str]:
+    schema_path = root / "schemas/trial-development-execution-gate.v0.1.schema.json"
+    gate_path = root / "gates/FET-001/development-execution-gate.v0.1.json"
+    predecessor_path = root / "gates/FET-001/implementation-gate.v0.1.json"
+    trial_root = root / "trials/FET-001"
+    bound_paths = (
+        schema_path,
+        gate_path,
+        predecessor_path,
+        trial_root / "schemas/context-envelope.v0.1.schema.json",
+        trial_root / "fixtures/development-cases.v0.1.json",
+        trial_root / "fixtures/mutations.v0.1.json",
+        trial_root / "schemas/report.v0.1.schema.json",
+    )
+    missing = [path.relative_to(root) for path in bound_paths if not path.is_file()]
+    if missing:
+        return [
+            f"missing FET-001 development-execution artifact: {path}"
+            for path in missing
+        ]
+
+    schema = load_json(schema_path)
+    gate = load_json(gate_path)
+    Draft202012Validator.check_schema(schema)
+    errors = schema_errors(gate, schema, "FET-001 development-execution gate")
+
+    expected_predecessor = {
+        "pull_request": "https://github.com/heronyogi/agent-governance-systems/pull/3",
+        "gate_source_commit": "4241238398c260fe5bb2a5e9acf40ce15995c4f0",
+        "gate_merge_commit": "bdcb2bf8bec3db294a032727783e2299269ba6bf",
+        "gate_record_sha256": (
+            "afbc777b25dbad74ac9445f80baeda01759fa032321804fe898b2879b908d0c9"
+        ),
+        "post_merge_check": (
+            "https://github.com/heronyogi/agent-governance-systems/"
+            "actions/runs/31221532501"
+        ),
+    }
+    if gate.get("predecessor_binding") != expected_predecessor:
+        errors.append("FET-001 development-execution predecessor binding mismatch")
+    predecessor_digest = hashlib.sha256(predecessor_path.read_bytes()).hexdigest()
+    if gate.get("predecessor_binding", {}).get("gate_record_sha256") != (
+        predecessor_digest
+    ):
+        errors.append("FET-001 development-execution predecessor digest mismatch")
+
+    expected_bindings = {
+        "PRODUCER": {
+            "track_id": "PRODUCER",
+            "system_id": "agent-context-integrity",
+            "repository_url": "https://github.com/heronyogi/agent-context-proof",
+            "pull_request": "https://github.com/heronyogi/agent-context-proof/pull/4",
+            "base_commit": "7fb35d3ff9ef31ffec46672510fdf87795c1de78",
+            "implementation_source_commit": (
+                "988452030ef7c238e69b66b6078164bd8ec7b481"
+            ),
+            "implementation_merge_commit": ("eb5dfe0bcb998a12ed1b1a6bd1e76f492808b55c"),
+            "post_merge_check": (
+                "https://github.com/heronyogi/agent-context-proof/"
+                "actions/runs/31222615282"
+            ),
+            "source_manifest_sha256": (
+                "4203bc8b20c5832eeb0ed0b0170981f21d1c5f3909c040bd409c418456ded8bd"
+            ),
+            "context_envelope_schema_sha256": (
+                "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d"
+            ),
+        },
+        "CONSUMER": {
+            "track_id": "CONSUMER",
+            "system_id": "agent-authority-integrity",
+            "repository_url": (
+                "https://github.com/heronyogi/agent-authority-benchmark"
+            ),
+            "pull_request": (
+                "https://github.com/heronyogi/agent-authority-benchmark/pull/2"
+            ),
+            "base_commit": "2506171db41a804f6c4418f0be607f7747d7420f",
+            "implementation_source_commit": (
+                "0e37e5b02813f3e47c545b8344a6c8fb3998a4f2"
+            ),
+            "implementation_merge_commit": ("36464fa9980aae91288739e5fa403d5841c92e1c"),
+            "post_merge_check": (
+                "https://github.com/heronyogi/agent-authority-benchmark/"
+                "actions/runs/31223835321"
+            ),
+            "source_manifest_sha256": (
+                "8dc388de0ef312afd035b34d67b18a3a1f30439f747f1572f8031e269cf4eafa"
+            ),
+            "context_envelope_schema_sha256": (
+                "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d"
+            ),
+        },
+    }
+    bindings = {
+        item.get("track_id"): item
+        for item in gate.get("implementation_bindings", [])
+        if isinstance(item, dict)
+    }
+    if set(bindings) != set(expected_bindings):
+        errors.append("FET-001 development-execution track coverage mismatch")
+    for track_id, expected in expected_bindings.items():
+        if bindings.get(track_id) != expected:
+            errors.append(
+                f"FET-001 development-execution {track_id.lower()} binding mismatch"
+            )
+
+    expected_compatibility = {
+        "transport_interface": {
+            "id": "federated-context-envelope",
+            "version": "0.1",
+        },
+        "context_envelope_schema_sha256": (
+            "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d"
+        ),
+        "producer_fixture_sha256": (
+            "8a8d953b1a0450d985eab66b8ca2c9d6e8176aa8cd8950e7ef86d53c5b2b040d"
+        ),
+        "development_cases_sha256": (
+            "17be93b14c76a5b190d062c1cc28f6ede6dbb66e27cc35b327dad6f264578002"
+        ),
+        "mutations_sha256": (
+            "6bfed72400d6e69205474fbc64dd84f9d9d48e207e93e9829abde21fa203da11"
+        ),
+        "report_schema_sha256": (
+            "3a32868bbba96532c50cde047395f557b4d6fb90f3d20d14f82382cb5446d7f4"
+        ),
+        "producer_exported_case_ids": [
+            "FET001-DEV-001",
+            "FET001-DEV-003",
+            "FET001-DEV-008",
+        ],
+        "development_case_count": 8,
+        "mutation_count": 10,
+    }
+    compatibility = gate.get("compatibility_evidence", {})
+    if compatibility != expected_compatibility:
+        errors.append("FET-001 development-execution compatibility mismatch")
+    local_digests = {
+        "context_envelope_schema_sha256": hashlib.sha256(
+            (trial_root / "schemas/context-envelope.v0.1.schema.json").read_bytes()
+        ).hexdigest(),
+        "development_cases_sha256": hashlib.sha256(
+            (trial_root / "fixtures/development-cases.v0.1.json").read_bytes()
+        ).hexdigest(),
+        "mutations_sha256": hashlib.sha256(
+            (trial_root / "fixtures/mutations.v0.1.json").read_bytes()
+        ).hexdigest(),
+        "report_schema_sha256": hashlib.sha256(
+            (trial_root / "schemas/report.v0.1.schema.json").read_bytes()
+        ).hexdigest(),
+    }
+    for name, actual_digest in local_digests.items():
+        if compatibility.get(name) != actual_digest:
+            errors.append(
+                f"FET-001 development-execution local digest mismatch: {name}"
+            )
+    schema_digests = {
+        item.get("context_envelope_schema_sha256") for item in bindings.values()
+    }
+    schema_digests.add(compatibility.get("context_envelope_schema_sha256"))
+    if schema_digests != {local_digests["context_envelope_schema_sha256"]}:
+        errors.append("FET-001 development-execution interface identity mismatch")
+
+    review = gate.get("review_record", {})
+    if review.get("independent_review") is not False:
+        errors.append("FET-001 development-execution must not claim independent review")
+    if review.get("blocking_ambiguities") != []:
+        errors.append("FET-001 development-execution has blocking ambiguity")
+
+    authorized_text = " ".join(
+        gate.get("authorized_execution", {}).get("permitted_actions", [])
+    ).lower()
+    prohibited_authorizations = (
+        "live model",
+        "provider api",
+        "production data",
+        "real external effect",
+        "sealed case",
+        "blind case",
+        "networked tool",
+    )
+    if any(phrase in authorized_text for phrase in prohibited_authorizations):
+        errors.append("FET-001 development-execution authorized scope exceeds gate")
+
+    required_controls = {
+        "Confirm both implementation workspaces are at the bound merge commits "
+        "with no source modifications.",
+        "Confirm all content-addressed trial inputs before execution.",
+        "Keep producer and consumer runtimes independent and exchange only the "
+        "versioned JSON artifact.",
+        "Record the declared observation boundary and return UNKNOWN where it "
+        "is insufficient.",
+        "Observe attempted and committed effects outside model or implementation "
+        "prose.",
+        "Prove each mutation is active before interpreting its result.",
+        "Report detection, effect occurrence, remediation, and indeterminate "
+        "observation separately.",
+        "Preserve every constituent hard failure without aggregation or cancellation.",
+        "Treat public development outcomes as authored fixtures rather than "
+        "independent evidence.",
+    }
+    if not required_controls.issubset(set(gate.get("required_controls", []))):
+        errors.append("FET-001 development-execution required controls mismatch")
+
+    required_non_authorizations = {
+        "Live model or provider API calls",
+        "Production or personal data, credentials, networked tools, or real "
+        "external effects",
+        "Execution or publication of sealed, blind, or independently authored cases",
+        "A FET-001 experimental, safety, certification, or production claim",
+        "Modification of the frozen FET-001 packet or either bound "
+        "implementation during execution",
+        "Generalization beyond the exact implementation commits, public cases, "
+        "mutations, and observation scope",
+        "Opening independent evaluation or live evaluation",
+    }
+    if not required_non_authorizations.issubset(
+        set(gate.get("non_authorizations", []))
+    ):
+        errors.append("FET-001 development-execution non-authorization mismatch")
+
+    reporting = gate.get("reporting_boundary", {})
+    if reporting.get("report_schema_sha256") != local_digests["report_schema_sha256"]:
+        errors.append("FET-001 development-execution report schema mismatch")
+    if reporting.get("aggregate_score_permitted") is not False:
+        errors.append("FET-001 development-execution aggregate score is prohibited")
+    if gate.get("next_gate", {}).get("state") != "closed":
+        errors.append("FET-001 independent-evaluation gate is not closed")
+
+    return sorted(set(errors))
+
+
 def validate_catalog(root: Path = ROOT) -> list[str]:
     manifest_schema = load_json(root / "schemas/system-manifest.v0.1.schema.json")
     registry_schema = load_json(root / "schemas/system-registry.v0.1.schema.json")
@@ -533,6 +766,7 @@ def validate_catalog(root: Path = ROOT) -> list[str]:
 
     errors.extend(validate_fet001(root))
     errors.extend(validate_fet001_implementation_gate(root, registry))
+    errors.extend(validate_fet001_development_execution_gate(root))
     return sorted(set(errors))
 
 

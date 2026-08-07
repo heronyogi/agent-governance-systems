@@ -1,0 +1,147 @@
+{
+  "gate_schema": "0.1.0",
+  "gate_id": "FET-001-DEVELOPMENT-EXECUTION",
+  "trial_id": "FET-001",
+  "gate_version": "0.1.0",
+  "decision": "OPEN_FOR_OFFLINE_PUBLIC_DEVELOPMENT_EXECUTION",
+  "decided_on": "2026-08-07",
+  "predecessor_binding": {
+    "pull_request": "https://github.com/heronyogi/agent-governance-systems/pull/3",
+    "gate_source_commit": "4241238398c260fe5bb2a5e9acf40ce15995c4f0",
+    "gate_merge_commit": "bdcb2bf8bec3db294a032727783e2299269ba6bf",
+    "gate_record_sha256": "afbc777b25dbad74ac9445f80baeda01759fa032321804fe898b2879b908d0c9",
+    "post_merge_check": "https://github.com/heronyogi/agent-governance-systems/actions/runs/31221532501"
+  },
+  "implementation_bindings": [
+    {
+      "track_id": "PRODUCER",
+      "system_id": "agent-context-integrity",
+      "repository_url": "https://github.com/heronyogi/agent-context-proof",
+      "pull_request": "https://github.com/heronyogi/agent-context-proof/pull/4",
+      "base_commit": "7fb35d3ff9ef31ffec46672510fdf87795c1de78",
+      "implementation_source_commit": "988452030ef7c238e69b66b6078164bd8ec7b481",
+      "implementation_merge_commit": "eb5dfe0bcb998a12ed1b1a6bd1e76f492808b55c",
+      "post_merge_check": "https://github.com/heronyogi/agent-context-proof/actions/runs/31222615282",
+      "source_manifest_sha256": "4203bc8b20c5832eeb0ed0b0170981f21d1c5f3909c040bd409c418456ded8bd",
+      "context_envelope_schema_sha256": "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d"
+    },
+    {
+      "track_id": "CONSUMER",
+      "system_id": "agent-authority-integrity",
+      "repository_url": "https://github.com/heronyogi/agent-authority-benchmark",
+      "pull_request": "https://github.com/heronyogi/agent-authority-benchmark/pull/2",
+      "base_commit": "2506171db41a804f6c4418f0be607f7747d7420f",
+      "implementation_source_commit": "0e37e5b02813f3e47c545b8344a6c8fb3998a4f2",
+      "implementation_merge_commit": "36464fa9980aae91288739e5fa403d5841c92e1c",
+      "post_merge_check": "https://github.com/heronyogi/agent-authority-benchmark/actions/runs/31223835321",
+      "source_manifest_sha256": "8dc388de0ef312afd035b34d67b18a3a1f30439f747f1572f8031e269cf4eafa",
+      "context_envelope_schema_sha256": "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d"
+    }
+  ],
+  "compatibility_evidence": {
+    "transport_interface": {
+      "id": "federated-context-envelope",
+      "version": "0.1"
+    },
+    "context_envelope_schema_sha256": "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d",
+    "producer_fixture_sha256": "8a8d953b1a0450d985eab66b8ca2c9d6e8176aa8cd8950e7ef86d53c5b2b040d",
+    "development_cases_sha256": "17be93b14c76a5b190d062c1cc28f6ede6dbb66e27cc35b327dad6f264578002",
+    "mutations_sha256": "6bfed72400d6e69205474fbc64dd84f9d9d48e207e93e9829abde21fa203da11",
+    "report_schema_sha256": "3a32868bbba96532c50cde047395f557b4d6fb90f3d20d14f82382cb5446d7f4",
+    "producer_exported_case_ids": [
+      "FET001-DEV-001",
+      "FET001-DEV-003",
+      "FET001-DEV-008"
+    ],
+    "development_case_count": 8,
+    "mutation_count": 10
+  },
+  "review_record": {
+    "boundary": "GitHub pull-request conversation comments, submitted reviews, and review threads for producer PR #4 and consumer PR #2 at gate evaluation.",
+    "producer": {
+      "conversation_comments": 0,
+      "reviews": 0,
+      "review_threads": 0,
+      "unresolved_review_threads": 0,
+      "change_requests": 0
+    },
+    "consumer": {
+      "conversation_comments": 0,
+      "reviews": 0,
+      "review_threads": 0,
+      "unresolved_review_threads": 0,
+      "change_requests": 0
+    },
+    "independent_review": false,
+    "blocking_ambiguities": [],
+    "acceptance_basis": "OWNER_MERGES_WITH_NO_RECORDED_BLOCKERS"
+  },
+  "conditions": {
+    "producer_merged": true,
+    "consumer_merged": true,
+    "post_merge_ci_passed": true,
+    "interface_content_address_equal": true,
+    "public_cases_implemented": true,
+    "mutation_probes_implemented": true,
+    "blocking_ambiguities_resolved": true
+  },
+  "authorized_execution": {
+    "execution_class": "PUBLIC_DEVELOPMENT",
+    "offline": true,
+    "synthetic_only": true,
+    "public_cases_only": true,
+    "real_external_effects": false,
+    "network_during_execution": false,
+    "permitted_actions": [
+      "Check out the exact producer and consumer implementation merge commits in isolated workspaces.",
+      "Run one clean preflight control before evaluating trial outcomes.",
+      "Exchange only federated-context-envelope v0.1 JSON artifacts across the system boundary.",
+      "Execute all eight frozen public development cases against the consumer implementation.",
+      "Activate all ten frozen mutation probes and record detection separately from effect occurrence.",
+      "Generate one schema-valid public development-conformance report with exact artifact and implementation identities."
+    ]
+  },
+  "required_controls": [
+    "Confirm both implementation workspaces are at the bound merge commits with no source modifications.",
+    "Confirm all content-addressed trial inputs before execution.",
+    "Keep producer and consumer runtimes independent and exchange only the versioned JSON artifact.",
+    "Record the declared observation boundary and return UNKNOWN where it is insufficient.",
+    "Observe attempted and committed effects outside model or implementation prose.",
+    "Prove each mutation is active before interpreting its result.",
+    "Report detection, effect occurrence, remediation, and indeterminate observation separately.",
+    "Preserve every constituent hard failure without aggregation or cancellation.",
+    "Treat public development outcomes as authored fixtures rather than independent evidence."
+  ],
+  "reporting_boundary": {
+    "report_schema": "trials/FET-001/schemas/report.v0.1.schema.json",
+    "report_schema_sha256": "3a32868bbba96532c50cde047395f557b4d6fb90f3d20d14f82382cb5446d7f4",
+    "result_class": "PUBLIC_DEVELOPMENT_CONFORMANCE",
+    "aggregate_score_permitted": false,
+    "allowed_claim_if_supported": "The bound implementations preserved the declared FET-001 authority boundary within the confirmed offline observation scope across the frozen public development cases and active mutations.",
+    "known_limits": [
+      "The cases and expected outcomes are public authored development fixtures, not independent or blind evidence.",
+      "Producer-export comparison covers FET001-DEV-001, FET001-DEV-003, and FET001-DEV-008; consumer evaluation covers all eight frozen cases.",
+      "The observation boundary contains only deterministic synthetic stores, queues, tools, and effects declared by the execution report.",
+      "A development-conformance result does not establish production safety, ontology validity, or authority outside the bound commits and cases."
+    ]
+  },
+  "non_authorizations": [
+    "Live model or provider API calls",
+    "Production or personal data, credentials, networked tools, or real external effects",
+    "Execution or publication of sealed, blind, or independently authored cases",
+    "A FET-001 experimental, safety, certification, or production claim",
+    "Modification of the frozen FET-001 packet or either bound implementation during execution",
+    "Generalization beyond the exact implementation commits, public cases, mutations, and observation scope",
+    "Opening independent evaluation or live evaluation"
+  ],
+  "next_gate": {
+    "gate_id": "FET-001-INDEPENDENT-EVALUATION",
+    "state": "closed",
+    "opens_when": [
+      "A schema-valid public development report is merged with exact execution identities and no erased hard failure.",
+      "Independent review records no unresolved blocking harness, observation, or reporting ambiguity.",
+      "A separately governed blind case set exists without disclosure to the evaluated implementations.",
+      "A separate gate record binds the development result and preserves the prohibition on live or production effects."
+    ]
+  }
+}
