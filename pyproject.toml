@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-governance-systems"
+version = "0.1.0"
+description = "A neutral catalog and contract for independently testable agent systems"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Agent Governance Systems contributors"}]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "jsonschema>=4.25,<5",
+  "pytest>=8,<10",
+  "ruff>=0.12,<1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+extend-exclude = ["build"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.setuptools]
+packages = ["scripts"]

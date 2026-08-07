@@ -1,0 +1,20 @@
+{
+  "catalog_version": "0.1.0",
+  "contract_version": "0.1.0",
+  "systems": [
+    {
+      "system_id": "agent-authority-integrity",
+      "repository_url": "https://github.com/heronyogi/agent-authority-benchmark",
+      "catalog_manifest": "manifests/agent-authority-integrity.json",
+      "source_manifest": "system.manifest.json",
+      "adoption": "candidate"
+    },
+    {
+      "system_id": "agent-context-integrity",
+      "repository_url": "https://github.com/heronyogi/agent-context-proof",
+      "catalog_manifest": "manifests/agent-context-integrity.json",
+      "source_manifest": "system.manifest.json",
+      "adoption": "candidate"
+    }
+  ]
+}
