@@ -26,6 +26,17 @@ adopted the contract, binds the catalog manifest by SHA-256, and names the
 successful post-merge check observed during activation. This is provenance for
 federation adoption, not certification of the system's external claims.
 
+## Federation trials
+
+[FET-001: Supported context does not transfer authority](trials/FET-001/README.md)
+is frozen for protocol review. It specifies a proposed Context-to-Authority
+transport envelope, eight public development cases, ten mutations, separated
+reporting, and a content-addressed review packet.
+
+FET-001 has no adapter, experimental result, blind case set, or live-model run.
+Its implementation gate remains closed until the protocol review is merged and
+records no unresolved blocking ambiguity.
+
 ## Federation rules
 
 1. A system boundary is organized around an externally testable invariant.
@@ -48,6 +59,7 @@ schemas/                   strict manifest and registry schemas
 scripts/validate_catalog.py cross-artifact conformance checks
 tests/                     schema and federation invariant tests
 docs/                      system map and growth rules
+trials/                    frozen cross-system protocol packets
 ```
 
 ## Validate the catalog

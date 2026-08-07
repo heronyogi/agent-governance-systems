@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heronyogi/agent-governance-systems/blob/main/trials/FET-001/schemas/freeze-manifest.v0.1.schema.json",
+  "title": "FET-001 freeze manifest v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_schema",
+    "trial_id",
+    "trial_version",
+    "state",
+    "frozen_on",
+    "baseline",
+    "implementation_gate",
+    "artifacts"
+  ],
+  "properties": {
+    "manifest_schema": {"const": "0.1.0"},
+    "trial_id": {"const": "FET-001"},
+    "trial_version": {"const": "0.1.0"},
+    "state": {"const": "review-frozen"},
+    "frozen_on": {"const": "2026-08-07"},
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tag", "repositories"],
+      "properties": {
+        "tag": {"const": "federation-adoption-v0.1.0"},
+        "repositories": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "commit"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            }
+          }
+        }
+      }
+    },
+    "implementation_gate": {"const": "closed"},
+    "artifacts": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "role", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^trials/FET-001/"},
+          "role": {
+            "enum": [
+              "review-guide",
+              "normative-protocol",
+              "protocol-mirror",
+              "schema",
+              "development-fixtures",
+              "mutation-catalog"
+            ]
+          },
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}
