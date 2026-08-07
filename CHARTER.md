@@ -84,7 +84,9 @@ must point to the same system identifier and declare its role.
 Catalog states are `candidate`, `active`, `deprecated`, and `retired`.
 
 - A candidate satisfies the manifest schema but has not completed adoption.
-- An active system has adopted the federation contract on its default branch.
+- An active system has adopted the federation contract on its default branch,
+  with an exact source commit, catalog-manifest digest, and successful
+  post-merge check recorded at activation.
 - A deprecated system remains readable but should not receive new consumers.
 - A retired system remains in the historical registry with a final explanation.
 

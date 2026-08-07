@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -78,6 +79,13 @@ def validate_catalog(root: Path = ROOT) -> list[str]:
         expected_path = str(manifests[system_id][0].relative_to(root))
         if path_value != expected_path:
             errors.append(f"catalog manifest path mismatch for {system_id}")
+        activation = entry.get("activation")
+        if isinstance(activation, dict):
+            manifest_digest = hashlib.sha256(
+                manifests[system_id][0].read_bytes()
+            ).hexdigest()
+            if activation.get("source_manifest_sha256") != manifest_digest:
+                errors.append(f"activation manifest digest mismatch for {system_id}")
 
     actual_paths = {str(path.relative_to(root)) for path in manifest_paths}
     for path in sorted(actual_paths - registered_paths):

@@ -39,8 +39,17 @@ After the source manifest is present on the system repository's default branch:
 
 1. verify the source and catalog manifest contents match;
 2. verify the repository's required checks pass;
-3. change catalog adoption to `active`; and
-4. record the exact source and catalog commits in the activation pull request.
+3. record the merged source commit, catalog-manifest SHA-256, successful
+   post-merge check, and activation date in the registry;
+4. change catalog adoption to `active`; and
+5. record the catalog base and exact source commits in the activation pull
+   request. The resulting catalog merge commit becomes the durable catalog-side
+   identity of the activation.
+
+The offline validator confirms that the recorded manifest digest still matches
+the catalog copy. Activation review must separately verify that the manifest at
+the recorded source commit is byte-identical and that the named post-merge check
+succeeded.
 
 ## 5. Split only at a real boundary
 
