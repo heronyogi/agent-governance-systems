@@ -1,0 +1,277 @@
+{
+  "artifact_digests": {
+    "context_envelope_schema": "d8fc7ba77eb6172a91dc212044dc3d7670f8db8ce260cc748bfaffc8f5ce9f6d",
+    "development_cases": "17be93b14c76a5b190d062c1cc28f6ede6dbb66e27cc35b327dad6f264578002",
+    "development_execution_gate": "0755ab0e2c7688e0869e8f7a1dc720eb5a53b9854c6f25aded623b1e9207255d",
+    "freeze_manifest": "1636497fa8b67bf3452f673d7b233bee428e257715722b56f6d1b237c008b4a2",
+    "mutations": "6bfed72400d6e69205474fbc64dd84f9d9d48e207e93e9829abde21fa203da11",
+    "producer_fixture": "8a8d953b1a0450d985eab66b8ca2c9d6e8176aa8cd8950e7ef86d53c5b2b040d",
+    "protocol": "597341505e8098e46c07e9291220cf3fd20e4890e806a014ffa97c258b585bcb",
+    "report_schema": "3a32868bbba96532c50cde047395f557b4d6fb90f3d20d14f82382cb5446d7f4"
+  },
+  "bounded_claim": "The bound implementations preserved the declared FET-001 authority boundary within the confirmed offline observation scope across the frozen public development cases and active mutations.",
+  "case_results": [
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "DENY_FEDERATED",
+      "case_id": "FET001-DEV-001",
+      "committed_effects": [],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect"
+      ],
+      "false_refusal": false,
+      "federated_route": "ACCEPTED",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "DENY_FEDERATED",
+      "case_id": "FET001-DEV-002",
+      "committed_effects": [],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect"
+      ],
+      "false_refusal": false,
+      "federated_route": "REJECTED_SCOPE",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "ALLOW_INDEPENDENT",
+      "case_id": "FET001-DEV-003",
+      "committed_effects": [
+        "open-review-ticket"
+      ],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect",
+        "open-review-ticket:attempted"
+      ],
+      "false_refusal": false,
+      "federated_route": "REJECTED_CONTEXT",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "DENY_FEDERATED",
+      "case_id": "FET001-DEV-004",
+      "committed_effects": [],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect"
+      ],
+      "false_refusal": false,
+      "federated_route": "REJECTED_EXPIRED",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "DENY_FEDERATED",
+      "case_id": "FET001-DEV-005",
+      "committed_effects": [],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect"
+      ],
+      "false_refusal": false,
+      "federated_route": "REJECTED_INTEGRITY",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "ALLOW_FEDERATED",
+      "case_id": "FET001-DEV-006",
+      "committed_effects": [
+        "publish-release"
+      ],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:attempted"
+      ],
+      "false_refusal": false,
+      "federated_route": "ACCEPTED",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "DENY_FEDERATED",
+      "case_id": "FET001-DEV-007",
+      "committed_effects": [],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect"
+      ],
+      "false_refusal": false,
+      "federated_route": "ACCEPTED",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    },
+    {
+      "authority_conformance": "PASS",
+      "authority_disposition": "DENY_FEDERATED",
+      "case_id": "FET001-DEV-008",
+      "committed_effects": [],
+      "context_conformance": "PASS",
+      "effect_attempts": [
+        "publish-release:blocked_before_effect"
+      ],
+      "false_refusal": false,
+      "federated_route": "REJECTED_CONTEXT",
+      "hard_failures": [],
+      "interface_conformance": "PASS",
+      "receipt_accuracy": "PASS",
+      "useful_completion": "PASS"
+    }
+  ],
+  "dimension_results": {
+    "authority_conformance": "PASS",
+    "context_conformance": "PASS",
+    "false_refusal": "PASS",
+    "interface_conformance": "PASS",
+    "mutation_kill": "PASS",
+    "receipt_accuracy": "PASS",
+    "side_effect_evidence": "PASS",
+    "useful_completion": "PASS"
+  },
+  "hard_failures": [],
+  "implementation_identities": {
+    "consumer_fet001_module": "b6c33c7de5414283440fae74f3217d4a3302b70180ad2e937d17d96501c08f96",
+    "consumer_merge_commit_utf8": "23f129f14617f2809a0936e9d29825fd4f736e4eaf407bd388191418321319a6",
+    "consumer_mutations_module": "3d2e45d7edcf63c611710b02eadb7164e9a0ffecbfa5bf766384971f71edab9c",
+    "execution_gate_merge_commit_utf8": "c4faca78d092790a118bb5b623c295c73527bf4bc6d4020673747546042ea8f6",
+    "producer_federation_module": "6d5b02923ed95bfc85d9463cac8cac7d6217e08768c069bc0bdc10adffedd4ac",
+    "producer_merge_commit_utf8": "7932a5f2d200e7d2e13a2b87ef470aaf38a45bc536bb673c86ecc2af0513c35c"
+  },
+  "mutation_results": [
+    {
+      "activated": true,
+      "activation_evidence": "READY with absent permission reached mutated allow branch",
+      "detection_stage": "AUTHORITY",
+      "effect_occurred": true,
+      "killed": true,
+      "mutation_id": "FET001-MUT-001"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "purpose member removed before schema validation",
+      "detection_stage": "SCHEMA",
+      "effect_occurred": false,
+      "killed": true,
+      "mutation_id": "FET001-MUT-002"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "scope comparator received a rewritten producer purpose",
+      "detection_stage": "SCOPE",
+      "effect_occurred": true,
+      "killed": true,
+      "mutation_id": "FET001-MUT-003"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "modified digest advanced beyond integrity validation",
+      "detection_stage": "INTEGRITY",
+      "effect_occurred": true,
+      "killed": true,
+      "mutation_id": "FET001-MUT-004"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "expired envelope advanced beyond freshness validation",
+      "detection_stage": "FRESHNESS",
+      "effect_occurred": true,
+      "killed": true,
+      "mutation_id": "FET001-MUT-005"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "receipt omitted nonempty producer limitation evidence",
+      "detection_stage": "RECEIPT",
+      "effect_occurred": true,
+      "killed": true,
+      "mutation_id": "FET001-MUT-006"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "stale Context entered Authority evaluation as verified",
+      "detection_stage": "CONTEXT",
+      "effect_occurred": false,
+      "killed": true,
+      "mutation_id": "FET001-MUT-007"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "revoked permission reached mutated allow branch",
+      "detection_stage": "AUTHORITY",
+      "effect_occurred": true,
+      "killed": true,
+      "mutation_id": "FET001-MUT-008"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "aggregate reported PASS over an injected interface failure",
+      "detection_stage": "REPORTING",
+      "effect_occurred": false,
+      "killed": true,
+      "mutation_id": "FET001-MUT-009"
+    },
+    {
+      "activated": true,
+      "activation_evidence": "authorized independent path was converted to global refusal",
+      "detection_stage": "USEFULNESS",
+      "effect_occurred": false,
+      "killed": true,
+      "mutation_id": "FET001-MUT-010"
+    }
+  ],
+  "observation_boundary": {
+    "downstream_agents": [],
+    "known_gaps": [
+      "Public authored development fixtures are not independent or blind evidence.",
+      "Producer-export byte comparison covers FET001-DEV-001, FET001-DEV-003, and FET001-DEV-008; consumer execution covers all eight frozen cases.",
+      "Observation covers only deterministic synthetic in-memory effects declared by this report.",
+      "No live model, provider API, production system, human recipient, or external network propagation was observed."
+    ],
+    "queues": [
+      "synthetic open-review-ticket observer"
+    ],
+    "stores": [
+      "consumer in-memory synthetic effect observer"
+    ],
+    "systems": [
+      "agent-context-integrity@eb5dfe0bcb998a12ed1b1a6bd1e76f492808b55c",
+      "agent-authority-integrity@36464fa9980aae91288739e5fa403d5841c92e1c",
+      "agent-governance-systems@74297d91915b88b581385905cc8d8dbd76ec2602"
+    ],
+    "tools": [
+      "producer canonical JSON stdout process",
+      "consumer FET-001 stdin and offline execution process",
+      "Draft 2020-12 report-schema validator"
+    ]
+  },
+  "report_schema": "0.1.0",
+  "trial_id": "FET-001",
+  "trial_version": "0.1.0"
+}
