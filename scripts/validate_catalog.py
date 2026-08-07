@@ -301,6 +301,122 @@ def validate_fet001(root: Path) -> list[str]:
     return sorted(set(errors))
 
 
+def validate_fet001_implementation_gate(
+    root: Path, registry: dict[str, Any]
+) -> list[str]:
+    schema_path = root / "schemas/trial-implementation-gate.v0.1.schema.json"
+    gate_path = root / "gates/FET-001/implementation-gate.v0.1.json"
+    readme_path = root / "gates/FET-001/README.md"
+    missing = [
+        path.relative_to(root)
+        for path in (schema_path, gate_path, readme_path)
+        if not path.is_file()
+    ]
+    if missing:
+        return [
+            f"missing FET-001 implementation-gate artifact: {path}" for path in missing
+        ]
+
+    schema = load_json(schema_path)
+    gate = load_json(gate_path)
+    Draft202012Validator.check_schema(schema)
+    errors = schema_errors(gate, schema, "FET-001 implementation gate")
+
+    expected_protocol_binding = {
+        "pull_request": "https://github.com/heronyogi/agent-governance-systems/pull/2",
+        "protocol_source_commit": "ec522b8a190d51e33309e08dbc74bbc2c4e22051",
+        "protocol_merge_commit": "83ef57c750eee4da56f6c358c85e9effa45d21b7",
+        "freeze_manifest_sha256": (
+            "1636497fa8b67bf3452f673d7b233bee428e257715722b56f6d1b237c008b4a2"
+        ),
+        "post_merge_check": (
+            "https://github.com/heronyogi/agent-governance-systems/"
+            "actions/runs/31220113497"
+        ),
+    }
+    if gate.get("protocol_binding") != expected_protocol_binding:
+        errors.append("FET-001 implementation gate protocol binding mismatch")
+
+    freeze_path = root / "trials/FET-001/freeze-manifest.v0.1.json"
+    freeze_digest = hashlib.sha256(freeze_path.read_bytes()).hexdigest()
+    if gate.get("protocol_binding", {}).get("freeze_manifest_sha256") != freeze_digest:
+        errors.append("FET-001 implementation gate freeze digest mismatch")
+
+    review = gate.get("review_record", {})
+    for count_name in (
+        "conversation_comments",
+        "reviews",
+        "review_threads",
+        "unresolved_review_threads",
+        "change_requests",
+    ):
+        if review.get(count_name) != 0:
+            errors.append(f"FET-001 gate review count mismatch: {count_name}")
+    if review.get("independent_review") is not False:
+        errors.append("FET-001 gate must not claim independent review")
+    if review.get("blocking_ambiguities") != []:
+        errors.append("FET-001 gate has unresolved blocking ambiguity")
+
+    registry_by_id = {
+        entry.get("system_id"): entry
+        for entry in registry.get("systems", [])
+        if isinstance(entry, dict)
+    }
+    expected_tracks = {
+        "PRODUCER": "agent-context-integrity",
+        "CONSUMER": "agent-authority-integrity",
+    }
+    tracks = {
+        track.get("track_id"): track
+        for track in gate.get("implementation_tracks", [])
+        if isinstance(track, dict)
+    }
+    if set(tracks) != set(expected_tracks):
+        errors.append("FET-001 implementation track coverage mismatch")
+    for track_id, system_id in expected_tracks.items():
+        track = tracks.get(track_id, {})
+        entry = registry_by_id.get(system_id, {})
+        if track.get("system_id") != system_id:
+            errors.append(f"FET-001 {track_id.lower()} system mismatch")
+        if track.get("repository_url") != entry.get("repository_url"):
+            errors.append(f"FET-001 {track_id.lower()} repository mismatch")
+        expected_commit = entry.get("activation", {}).get("source_commit")
+        if track.get("base_commit") != expected_commit:
+            errors.append(f"FET-001 {track_id.lower()} base commit mismatch")
+
+        authorized_text = " ".join(track.get("authorized_changes", [])).lower()
+        prohibited_authorizations = (
+            "live model",
+            "provider api",
+            "production data",
+            "production traffic",
+            "real external side effect",
+            "claim a fet-001 experimental",
+            "publish sealed",
+        )
+        if any(phrase in authorized_text for phrase in prohibited_authorizations):
+            errors.append(
+                f"FET-001 {track_id.lower()} authorized scope exceeds the gate"
+            )
+
+    required_non_authorizations = {
+        "Live model or provider API calls",
+        "Production data, credentials, or external side effects",
+        "Publication of sealed or independently authored cases",
+        "A FET-001 experimental, safety, or production claim",
+        "Modification of the frozen FET-001 protocol packet",
+        "Opening the development-execution gate",
+    }
+    if not required_non_authorizations.issubset(
+        set(gate.get("non_authorizations", []))
+    ):
+        errors.append("FET-001 implementation gate non-authorization mismatch")
+    if gate.get("next_gate", {}).get("state") != "closed":
+        errors.append("FET-001 development-execution gate is not closed")
+
+    return sorted(set(errors))
+
+
 def validate_catalog(root: Path = ROOT) -> list[str]:
     manifest_schema = load_json(root / "schemas/system-manifest.v0.1.schema.json")
     registry_schema = load_json(root / "schemas/system-registry.v0.1.schema.json")
@@ -416,6 +532,7 @@ def validate_catalog(root: Path = ROOT) -> list[str]:
             errors.append(f"duplicate interface id for {system_id}: {interface_id}")
 
     errors.extend(validate_fet001(root))
+    errors.extend(validate_fet001_implementation_gate(root, registry))
     return sorted(set(errors))
 
 

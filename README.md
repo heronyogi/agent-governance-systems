@@ -29,13 +29,14 @@ federation adoption, not certification of the system's external claims.
 ## Federation trials
 
 [FET-001: Supported context does not transfer authority](trials/FET-001/README.md)
-is frozen for protocol review. It specifies a proposed Context-to-Authority
+is a merged, frozen protocol. It specifies a proposed Context-to-Authority
 transport envelope, eight public development cases, ten mutations, separated
 reporting, and a content-addressed review packet.
 
 FET-001 has no adapter, experimental result, blind case set, or live-model run.
-Its implementation gate remains closed until the protocol review is merged and
-records no unresolved blocking ambiguity.
+Its [implementation-gate record](gates/FET-001/README.md) opens only separate,
+offline producer and consumer implementation pull requests. Development-trial
+execution and live evaluation remain closed.
 
 ## Federation rules
 
@@ -59,6 +60,7 @@ schemas/                   strict manifest and registry schemas
 scripts/validate_catalog.py cross-artifact conformance checks
 tests/                     schema and federation invariant tests
 docs/                      system map and growth rules
+gates/                     scoped, evidence-bound trial decisions
 trials/                    frozen cross-system protocol packets
 ```
 

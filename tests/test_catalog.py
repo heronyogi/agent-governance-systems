@@ -13,7 +13,7 @@ def write_json(path: Path, value: object) -> None:
 
 def copy_catalog(tmp_path: Path) -> Path:
     target = tmp_path / "catalog"
-    for directory in ("manifests", "registry", "schemas", "trials"):
+    for directory in ("gates", "manifests", "registry", "schemas", "trials"):
         shutil.copytree(ROOT / directory, target / directory)
     return target
 
@@ -177,3 +177,86 @@ def test_context_envelope_rejects_downstream_permission(tmp_path: Path) -> None:
     write_json(path, document)
 
     assert "downstream_permission" in "\n".join(validate_catalog(catalog))
+
+
+def test_gate_freeze_digest_is_bound(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["protocol_binding"]["freeze_manifest_sha256"] = "0" * 64
+    write_json(path, gate)
+
+    errors = "\n".join(validate_catalog(catalog))
+    assert "implementation gate protocol binding mismatch" in errors
+    assert "implementation gate freeze digest mismatch" in errors
+
+
+def test_gate_cannot_claim_independent_review(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["review_record"]["independent_review"] = True
+    write_json(path, gate)
+
+    assert "must not claim independent review" in "\n".join(validate_catalog(catalog))
+
+
+def test_gate_requires_source_base_commit(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    producer = next(
+        track
+        for track in gate["implementation_tracks"]
+        if track["track_id"] == "PRODUCER"
+    )
+    producer["base_commit"] = "0" * 40
+    write_json(path, gate)
+
+    assert "producer base commit mismatch" in "\n".join(validate_catalog(catalog))
+
+
+def test_gate_preserves_non_authorizations(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["non_authorizations"].remove("Live model or provider API calls")
+    write_json(path, gate)
+
+    assert "implementation gate non-authorization mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_gate_rejects_authorized_scope_overreach(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["implementation_tracks"][0]["authorized_changes"].append(
+        "Run live model evaluation."
+    )
+    write_json(path, gate)
+
+    assert "authorized scope exceeds the gate" in "\n".join(validate_catalog(catalog))
+
+
+def test_development_execution_gate_remains_closed(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["next_gate"]["state"] = "open"
+    write_json(path, gate)
+
+    assert "development-execution gate is not closed" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_gate_rejects_blocking_ambiguity(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["review_record"]["blocking_ambiguities"] = ["Unresolved interface rule"]
+    write_json(path, gate)
+
+    assert "unresolved blocking ambiguity" in "\n".join(validate_catalog(catalog))
