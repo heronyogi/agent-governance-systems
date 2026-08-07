@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heronyogi/agent-governance-systems/blob/main/schemas/trial-implementation-gate.v0.1.schema.json",
+  "title": "Federation trial implementation gate v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gate_schema",
+    "gate_id",
+    "trial_id",
+    "gate_version",
+    "decision",
+    "decided_on",
+    "protocol_binding",
+    "review_record",
+    "conditions",
+    "implementation_tracks",
+    "cross_track_constraints",
+    "non_authorizations",
+    "next_gate"
+  ],
+  "properties": {
+    "gate_schema": {"const": "0.1.0"},
+    "gate_id": {"const": "FET-001-IMPLEMENTATION"},
+    "trial_id": {"const": "FET-001"},
+    "gate_version": {"const": "0.1.0"},
+    "decision": {"const": "OPEN_FOR_SEPARATE_IMPLEMENTATION_PRS"},
+    "decided_on": {"const": "2026-08-07"},
+    "protocol_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pull_request",
+        "protocol_source_commit",
+        "protocol_merge_commit",
+        "freeze_manifest_sha256",
+        "post_merge_check"
+      ],
+      "properties": {
+        "pull_request": {"type": "string", "pattern": "^https://github\\.com/.+/pull/[0-9]+$"},
+        "protocol_source_commit": {"$ref": "#/$defs/commit"},
+        "protocol_merge_commit": {"$ref": "#/$defs/commit"},
+        "freeze_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "post_merge_check": {"type": "string", "pattern": "^https://github\\.com/.+/actions/runs/[0-9]+$"}
+      }
+    },
+    "review_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundary",
+        "conversation_comments",
+        "reviews",
+        "review_threads",
+        "unresolved_review_threads",
+        "change_requests",
+        "independent_review",
+        "blocking_ambiguities",
+        "acceptance_basis"
+      ],
+      "properties": {
+        "boundary": {"type": "string", "minLength": 1},
+        "conversation_comments": {"type": "integer", "minimum": 0},
+        "reviews": {"type": "integer", "minimum": 0},
+        "review_threads": {"type": "integer", "minimum": 0},
+        "unresolved_review_threads": {"const": 0},
+        "change_requests": {"const": 0},
+        "independent_review": {"type": "boolean"},
+        "blocking_ambiguities": {"type": "array", "maxItems": 0},
+        "acceptance_basis": {"const": "OWNER_MERGE_WITH_NO_RECORDED_BLOCKERS"}
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frozen_packet_merged",
+        "frozen_packet_valid",
+        "post_merge_ci_passed",
+        "blocking_ambiguities_resolved",
+        "separate_prs_required"
+      ],
+      "properties": {
+        "frozen_packet_merged": {"const": true},
+        "frozen_packet_valid": {"const": true},
+        "post_merge_ci_passed": {"const": true},
+        "blocking_ambiguities_resolved": {"const": true},
+        "separate_prs_required": {"const": true}
+      }
+    },
+    "implementation_tracks": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "track_id",
+          "system_id",
+          "repository_url",
+          "base_commit",
+          "authorized_changes",
+          "prohibited_changes"
+        ],
+        "properties": {
+          "track_id": {"enum": ["PRODUCER", "CONSUMER"]},
+          "system_id": {"enum": ["agent-context-integrity", "agent-authority-integrity"]},
+          "repository_url": {"type": "string", "pattern": "^https://github\\.com/"},
+          "base_commit": {"$ref": "#/$defs/commit"},
+          "authorized_changes": {"$ref": "#/$defs/nonEmptyStrings"},
+          "prohibited_changes": {"$ref": "#/$defs/nonEmptyStrings"}
+        }
+      }
+    },
+    "cross_track_constraints": {"$ref": "#/$defs/nonEmptyStrings"},
+    "non_authorizations": {"$ref": "#/$defs/nonEmptyStrings"},
+    "next_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_id", "state", "opens_when"],
+      "properties": {
+        "gate_id": {"const": "FET-001-DEVELOPMENT-EXECUTION"},
+        "state": {"const": "closed"},
+        "opens_when": {"$ref": "#/$defs/nonEmptyStrings"}
+      }
+    }
+  },
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

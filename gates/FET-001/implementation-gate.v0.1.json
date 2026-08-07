@@ -1,0 +1,98 @@
+{
+  "gate_schema": "0.1.0",
+  "gate_id": "FET-001-IMPLEMENTATION",
+  "trial_id": "FET-001",
+  "gate_version": "0.1.0",
+  "decision": "OPEN_FOR_SEPARATE_IMPLEMENTATION_PRS",
+  "decided_on": "2026-08-07",
+  "protocol_binding": {
+    "pull_request": "https://github.com/heronyogi/agent-governance-systems/pull/2",
+    "protocol_source_commit": "ec522b8a190d51e33309e08dbc74bbc2c4e22051",
+    "protocol_merge_commit": "83ef57c750eee4da56f6c358c85e9effa45d21b7",
+    "freeze_manifest_sha256": "1636497fa8b67bf3452f673d7b233bee428e257715722b56f6d1b237c008b4a2",
+    "post_merge_check": "https://github.com/heronyogi/agent-governance-systems/actions/runs/31220113497"
+  },
+  "review_record": {
+    "boundary": "GitHub pull-request conversation comments, submitted reviews, and review threads for PR #2 at gate evaluation.",
+    "conversation_comments": 0,
+    "reviews": 0,
+    "review_threads": 0,
+    "unresolved_review_threads": 0,
+    "change_requests": 0,
+    "independent_review": false,
+    "blocking_ambiguities": [],
+    "acceptance_basis": "OWNER_MERGE_WITH_NO_RECORDED_BLOCKERS"
+  },
+  "conditions": {
+    "frozen_packet_merged": true,
+    "frozen_packet_valid": true,
+    "post_merge_ci_passed": true,
+    "blocking_ambiguities_resolved": true,
+    "separate_prs_required": true
+  },
+  "implementation_tracks": [
+    {
+      "track_id": "PRODUCER",
+      "system_id": "agent-context-integrity",
+      "repository_url": "https://github.com/heronyogi/agent-context-proof",
+      "base_commit": "7fb35d3ff9ef31ffec46672510fdf87795c1de78",
+      "authorized_changes": [
+        "Implement federated-context-envelope v0.1 as a deterministic wrapper around governed-repository-decision v0.2.",
+        "Export schema-conformant synthetic development fixtures.",
+        "Add offline canonicalization, integrity, expiry, and scope tests.",
+        "Update the source system manifest only for the new provided interface."
+      ],
+      "prohibited_changes": [
+        "Add downstream permission or effect-authorization fields to the producer envelope.",
+        "Create a runtime dependency on the Authority system.",
+        "Run live model evaluation or use production data.",
+        "Claim a FET-001 experimental result."
+      ]
+    },
+    {
+      "track_id": "CONSUMER",
+      "system_id": "agent-authority-integrity",
+      "repository_url": "https://github.com/heronyogi/agent-authority-benchmark",
+      "base_commit": "2506171db41a804f6c4418f0be607f7747d7420f",
+      "authorized_changes": [
+        "Implement deterministic envelope validation and the ordered FET-001 consumer stages.",
+        "Resolve purpose-specific Authority independently of the Context disposition.",
+        "Add external side-effect observation, accurate receipts, and independent-path handling.",
+        "Implement the eight public development cases and ten mutation families.",
+        "Update the source system manifest only for the new consumed interface."
+      ],
+      "prohibited_changes": [
+        "Treat READY or producer confidence as downstream permission.",
+        "Rewrite producer Context semantics or suppress limitations and disagreement.",
+        "Run live model evaluation or use production data.",
+        "Claim a FET-001 experimental result."
+      ]
+    }
+  ],
+  "cross_track_constraints": [
+    "Producer and consumer changes must use separate pull requests in their owning repositories.",
+    "Both implementations must match the frozen FET-001 v0.1 schemas and outcomes exactly.",
+    "Neither implementation may modify the frozen protocol packet.",
+    "All implementation checks must remain offline and synthetic.",
+    "No constituent hard failure may be hidden by an aggregate result."
+  ],
+  "non_authorizations": [
+    "Live model or provider API calls",
+    "Production data, credentials, or external side effects",
+    "Publication of sealed or independently authored cases",
+    "A FET-001 experimental, safety, or production claim",
+    "Modification of the frozen FET-001 protocol packet",
+    "Opening the development-execution gate"
+  ],
+  "next_gate": {
+    "gate_id": "FET-001-DEVELOPMENT-EXECUTION",
+    "state": "closed",
+    "opens_when": [
+      "Producer and consumer implementation pull requests are merged with successful post-merge CI.",
+      "The emitted and consumed envelope schemas are byte-identical or content-addressed to one canonical artifact.",
+      "All eight public development cases and ten mutation activation probes are implemented.",
+      "Review records no unresolved blocking interface or authority ambiguity.",
+      "A separate gate record binds both implementation commits and keeps live evaluation unauthorized."
+    ]
+  }
+}
