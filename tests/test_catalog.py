@@ -61,3 +61,34 @@ def test_nonreciprocal_sibling_is_rejected(tmp_path: Path) -> None:
     write_json(path, manifest)
 
     assert "nonreciprocal sibling relationship" in "\n".join(validate_catalog(catalog))
+
+
+def test_active_system_requires_activation_binding(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "registry/systems.v0.1.json"
+    registry = json.loads(path.read_text(encoding="utf-8"))
+    registry["systems"][0].pop("activation")
+    write_json(path, registry)
+
+    assert "'activation' is a required property" in "\n".join(validate_catalog(catalog))
+
+
+def test_candidate_system_forbids_activation_binding(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "registry/systems.v0.1.json"
+    registry = json.loads(path.read_text(encoding="utf-8"))
+    registry["systems"][0]["adoption"] = "candidate"
+    write_json(path, registry)
+
+    errors = validate_catalog(catalog)
+    assert any("activation" in error for error in errors)
+
+
+def test_activation_digest_binds_catalog_manifest(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "manifests/agent-authority-integrity.json"
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    manifest["name"] = "Changed after activation"
+    write_json(path, manifest)
+
+    assert "activation manifest digest mismatch" in "\n".join(validate_catalog(catalog))

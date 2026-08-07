@@ -7,14 +7,26 @@
       "repository_url": "https://github.com/heronyogi/agent-authority-benchmark",
       "catalog_manifest": "manifests/agent-authority-integrity.json",
       "source_manifest": "system.manifest.json",
-      "adoption": "candidate"
+      "adoption": "active",
+      "activation": {
+        "source_commit": "2506171db41a804f6c4418f0be607f7747d7420f",
+        "source_manifest_sha256": "2f14d4c668acf4b6475a0d2d5b92abb0787cea3c7ae1248f573245adaf43f892",
+        "post_merge_check": "https://github.com/heronyogi/agent-authority-benchmark/actions/runs/31216804607",
+        "activated_on": "2026-08-07"
+      }
     },
     {
       "system_id": "agent-context-integrity",
       "repository_url": "https://github.com/heronyogi/agent-context-proof",
       "catalog_manifest": "manifests/agent-context-integrity.json",
       "source_manifest": "system.manifest.json",
-      "adoption": "candidate"
+      "adoption": "active",
+      "activation": {
+        "source_commit": "7fb35d3ff9ef31ffec46672510fdf87795c1de78",
+        "source_manifest_sha256": "fa468a7697fd20ed964c4dd85e074167198f4c1cd31ea3ac0949fc4b28b65e36",
+        "post_merge_check": "https://github.com/heronyogi/agent-context-proof/actions/runs/31217026651",
+        "activated_on": "2026-08-07"
+      }
     }
   ]
 }

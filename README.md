@@ -7,12 +7,12 @@ Each registered system owns one bounded question, one primary invariant, and
 one evidence discipline. Systems may exchange versioned artifacts, but no
 system may silently promote another system's information into authority.
 
-> Repository state: v0.1 defines the federation contract, validates two
-> candidate system manifests, and documents possible future boundaries. It is
-> an organizational specification, not a runtime orchestrator, safety result,
-> ontology, or certification program.
+> Repository state: v0.1 defines the federation contract and validates two
+> active system manifests bound to their merged source commits, manifest
+> digests, and post-merge checks. It is an organizational specification, not a
+> runtime orchestrator, safety result, ontology, or certification program.
 
-## Registered candidates
+## Active systems
 
 | System | Governing question | Repository |
 |---|---|---|
@@ -20,6 +20,11 @@ system may silently promote another system's information into authority.
 | Authority integrity | Which consequential effects remained inside a declared authority boundary? | [Agent Authority Benchmark](https://github.com/heronyogi/agent-authority-benchmark) |
 
 The projects are siblings. Neither is a runtime dependency of the other.
+
+An `active` registry entry identifies the exact source commit where the system
+adopted the contract, binds the catalog manifest by SHA-256, and names the
+successful post-merge check observed during activation. This is provenance for
+federation adoption, not certification of the system's external claims.
 
 ## Federation rules
 
