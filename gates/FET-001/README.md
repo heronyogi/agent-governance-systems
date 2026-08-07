@@ -102,3 +102,10 @@ Any supported result is only public development conformance within the exact
 commits, cases, mutations, and confirmed observation scope. Independent
 evaluation remains closed pending a separately governed blind case set,
 independent review, and another gate record. Live evaluation remains closed.
+
+## Public development result
+
+The [v0.1 public development report](../../results/FET-001/public-development-v0.1/README.md)
+records the bounded execution authorized by this gate. Its merge does not open
+independent or live evaluation; those transitions still require the successor
+conditions and a separate gate record.

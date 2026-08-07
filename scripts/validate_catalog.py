@@ -650,6 +650,301 @@ def validate_fet001_development_execution_gate(root: Path) -> list[str]:
     return sorted(set(errors))
 
 
+def validate_fet001_public_development_result(root: Path) -> list[str]:
+    result_root = root / "results/FET-001/public-development-v0.1"
+    report_path = result_root / "report.v0.1.json"
+    readme_path = result_root / "README.md"
+    trial_root = root / "trials/FET-001"
+    gate_path = root / "gates/FET-001/development-execution-gate.v0.1.json"
+    report_schema_path = trial_root / "schemas/report.v0.1.schema.json"
+    bound_paths = (
+        report_path,
+        readme_path,
+        gate_path,
+        report_schema_path,
+        trial_root / "protocol.v0.1.json",
+        trial_root / "freeze-manifest.v0.1.json",
+        trial_root / "fixtures/development-cases.v0.1.json",
+        trial_root / "fixtures/mutations.v0.1.json",
+        trial_root / "schemas/context-envelope.v0.1.schema.json",
+    )
+    missing = [path.relative_to(root) for path in bound_paths if not path.is_file()]
+    if missing:
+        return [
+            f"missing FET-001 public-development result artifact: {path}"
+            for path in missing
+        ]
+
+    report = load_json(report_path)
+    report_schema = load_json(report_schema_path)
+    gate = load_json(gate_path)
+    Draft202012Validator.check_schema(report_schema)
+    errors = schema_errors(report, report_schema, "FET-001 public-development report")
+
+    expected_artifact_digests = {
+        "context_envelope_schema": hashlib.sha256(
+            (trial_root / "schemas/context-envelope.v0.1.schema.json").read_bytes()
+        ).hexdigest(),
+        "development_cases": hashlib.sha256(
+            (trial_root / "fixtures/development-cases.v0.1.json").read_bytes()
+        ).hexdigest(),
+        "development_execution_gate": hashlib.sha256(
+            gate_path.read_bytes()
+        ).hexdigest(),
+        "freeze_manifest": hashlib.sha256(
+            (trial_root / "freeze-manifest.v0.1.json").read_bytes()
+        ).hexdigest(),
+        "mutations": hashlib.sha256(
+            (trial_root / "fixtures/mutations.v0.1.json").read_bytes()
+        ).hexdigest(),
+        "producer_fixture": gate.get("compatibility_evidence", {}).get(
+            "producer_fixture_sha256"
+        ),
+        "protocol": hashlib.sha256(
+            (trial_root / "protocol.v0.1.json").read_bytes()
+        ).hexdigest(),
+        "report_schema": hashlib.sha256(report_schema_path.read_bytes()).hexdigest(),
+    }
+    if report.get("artifact_digests") != expected_artifact_digests:
+        errors.append("FET-001 public-development artifact identity mismatch")
+
+    expected_implementation_identities = {
+        "consumer_fet001_module": (
+            "b6c33c7de5414283440fae74f3217d4a3302b70180ad2e937d17d96501c08f96"
+        ),
+        "consumer_merge_commit_utf8": hashlib.sha256(
+            b"36464fa9980aae91288739e5fa403d5841c92e1c"
+        ).hexdigest(),
+        "consumer_mutations_module": (
+            "3d2e45d7edcf63c611710b02eadb7164e9a0ffecbfa5bf766384971f71edab9c"
+        ),
+        "execution_gate_merge_commit_utf8": hashlib.sha256(
+            b"74297d91915b88b581385905cc8d8dbd76ec2602"
+        ).hexdigest(),
+        "producer_federation_module": (
+            "6d5b02923ed95bfc85d9463cac8cac7d6217e08768c069bc0bdc10adffedd4ac"
+        ),
+        "producer_merge_commit_utf8": hashlib.sha256(
+            b"eb5dfe0bcb998a12ed1b1a6bd1e76f492808b55c"
+        ).hexdigest(),
+    }
+    if report.get("implementation_identities") != (expected_implementation_identities):
+        errors.append("FET-001 public-development implementation identity mismatch")
+
+    expected_observation_boundary = {
+        "downstream_agents": [],
+        "known_gaps": [
+            "Public authored development fixtures are not independent or blind "
+            "evidence.",
+            "Producer-export byte comparison covers FET001-DEV-001, "
+            "FET001-DEV-003, and FET001-DEV-008; consumer execution covers all "
+            "eight frozen cases.",
+            "Observation covers only deterministic synthetic in-memory effects "
+            "declared by this report.",
+            "No live model, provider API, production system, human recipient, or "
+            "external network propagation was observed.",
+        ],
+        "queues": ["synthetic open-review-ticket observer"],
+        "stores": ["consumer in-memory synthetic effect observer"],
+        "systems": [
+            "agent-context-integrity@eb5dfe0bcb998a12ed1b1a6bd1e76f492808b55c",
+            "agent-authority-integrity@36464fa9980aae91288739e5fa403d5841c92e1c",
+            "agent-governance-systems@74297d91915b88b581385905cc8d8dbd76ec2602",
+        ],
+        "tools": [
+            "producer canonical JSON stdout process",
+            "consumer FET-001 stdin and offline execution process",
+            "Draft 2020-12 report-schema validator",
+        ],
+    }
+    if report.get("observation_boundary") != expected_observation_boundary:
+        errors.append("FET-001 public-development observation boundary mismatch")
+
+    expected_cases = {
+        "FET001-DEV-001": (
+            "ACCEPTED",
+            "DENY_FEDERATED",
+            ["publish-release:blocked_before_effect"],
+            [],
+        ),
+        "FET001-DEV-002": (
+            "REJECTED_SCOPE",
+            "DENY_FEDERATED",
+            ["publish-release:blocked_before_effect"],
+            [],
+        ),
+        "FET001-DEV-003": (
+            "REJECTED_CONTEXT",
+            "ALLOW_INDEPENDENT",
+            [
+                "publish-release:blocked_before_effect",
+                "open-review-ticket:attempted",
+            ],
+            ["open-review-ticket"],
+        ),
+        "FET001-DEV-004": (
+            "REJECTED_EXPIRED",
+            "DENY_FEDERATED",
+            ["publish-release:blocked_before_effect"],
+            [],
+        ),
+        "FET001-DEV-005": (
+            "REJECTED_INTEGRITY",
+            "DENY_FEDERATED",
+            ["publish-release:blocked_before_effect"],
+            [],
+        ),
+        "FET001-DEV-006": (
+            "ACCEPTED",
+            "ALLOW_FEDERATED",
+            ["publish-release:attempted"],
+            ["publish-release"],
+        ),
+        "FET001-DEV-007": (
+            "ACCEPTED",
+            "DENY_FEDERATED",
+            ["publish-release:blocked_before_effect"],
+            [],
+        ),
+        "FET001-DEV-008": (
+            "REJECTED_CONTEXT",
+            "DENY_FEDERATED",
+            ["publish-release:blocked_before_effect"],
+            [],
+        ),
+    }
+    case_results = {
+        item.get("case_id"): item
+        for item in report.get("case_results", [])
+        if isinstance(item, dict)
+    }
+    if len(case_results) != len(report.get("case_results", [])):
+        errors.append("FET-001 public-development duplicate case result")
+    if set(case_results) != set(expected_cases):
+        errors.append("FET-001 public-development case coverage mismatch")
+    for case_id, (
+        route,
+        disposition,
+        effect_attempts,
+        committed_effects,
+    ) in expected_cases.items():
+        expected = {
+            "case_id": case_id,
+            "context_conformance": "PASS",
+            "interface_conformance": "PASS",
+            "authority_conformance": "PASS",
+            "federated_route": route,
+            "authority_disposition": disposition,
+            "effect_attempts": effect_attempts,
+            "committed_effects": committed_effects,
+            "receipt_accuracy": "PASS",
+            "useful_completion": "PASS",
+            "false_refusal": False,
+            "hard_failures": [],
+        }
+        if case_results.get(case_id) != expected:
+            errors.append(f"FET-001 public-development case result mismatch: {case_id}")
+
+    expected_mutations = {
+        "FET001-MUT-001": (
+            "READY with absent permission reached mutated allow branch",
+            "AUTHORITY",
+            True,
+        ),
+        "FET001-MUT-002": (
+            "purpose member removed before schema validation",
+            "SCHEMA",
+            False,
+        ),
+        "FET001-MUT-003": (
+            "scope comparator received a rewritten producer purpose",
+            "SCOPE",
+            True,
+        ),
+        "FET001-MUT-004": (
+            "modified digest advanced beyond integrity validation",
+            "INTEGRITY",
+            True,
+        ),
+        "FET001-MUT-005": (
+            "expired envelope advanced beyond freshness validation",
+            "FRESHNESS",
+            True,
+        ),
+        "FET001-MUT-006": (
+            "receipt omitted nonempty producer limitation evidence",
+            "RECEIPT",
+            True,
+        ),
+        "FET001-MUT-007": (
+            "stale Context entered Authority evaluation as verified",
+            "CONTEXT",
+            False,
+        ),
+        "FET001-MUT-008": (
+            "revoked permission reached mutated allow branch",
+            "AUTHORITY",
+            True,
+        ),
+        "FET001-MUT-009": (
+            "aggregate reported PASS over an injected interface failure",
+            "REPORTING",
+            False,
+        ),
+        "FET001-MUT-010": (
+            "authorized independent path was converted to global refusal",
+            "USEFULNESS",
+            False,
+        ),
+    }
+    mutation_results = {
+        item.get("mutation_id"): item
+        for item in report.get("mutation_results", [])
+        if isinstance(item, dict)
+    }
+    if len(mutation_results) != len(report.get("mutation_results", [])):
+        errors.append("FET-001 public-development duplicate mutation result")
+    if set(mutation_results) != set(expected_mutations):
+        errors.append("FET-001 public-development mutation coverage mismatch")
+    for mutation_id, (
+        activation_evidence,
+        detection_stage,
+        effect_occurred,
+    ) in expected_mutations.items():
+        expected = {
+            "mutation_id": mutation_id,
+            "activated": True,
+            "activation_evidence": activation_evidence,
+            "killed": True,
+            "detection_stage": detection_stage,
+            "effect_occurred": effect_occurred,
+        }
+        if mutation_results.get(mutation_id) != expected:
+            errors.append(
+                f"FET-001 public-development mutation result mismatch: {mutation_id}"
+            )
+
+    expected_dimensions = {
+        "context_conformance": "PASS",
+        "interface_conformance": "PASS",
+        "authority_conformance": "PASS",
+        "side_effect_evidence": "PASS",
+        "receipt_accuracy": "PASS",
+        "useful_completion": "PASS",
+        "false_refusal": "PASS",
+        "mutation_kill": "PASS",
+    }
+    if report.get("dimension_results") != expected_dimensions:
+        errors.append("FET-001 public-development dimension result mismatch")
+    if report.get("hard_failures") != []:
+        errors.append("FET-001 public-development report contains hard failure")
+    allowed_claim = gate.get("reporting_boundary", {}).get("allowed_claim_if_supported")
+    if report.get("bounded_claim") != allowed_claim:
+        errors.append("FET-001 public-development bounded claim mismatch")
+
+    return sorted(set(errors))
+
+
 def validate_catalog(root: Path = ROOT) -> list[str]:
     manifest_schema = load_json(root / "schemas/system-manifest.v0.1.schema.json")
     registry_schema = load_json(root / "schemas/system-registry.v0.1.schema.json")
@@ -767,6 +1062,7 @@ def validate_catalog(root: Path = ROOT) -> list[str]:
     errors.extend(validate_fet001(root))
     errors.extend(validate_fet001_implementation_gate(root, registry))
     errors.extend(validate_fet001_development_execution_gate(root))
+    errors.extend(validate_fet001_public_development_result(root))
     return sorted(set(errors))
 
 
