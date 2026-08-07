@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heronyogi/agent-governance-systems/blob/main/schemas/trial-development-execution-gate.v0.1.schema.json",
+  "title": "Federation trial development-execution gate v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gate_schema",
+    "gate_id",
+    "trial_id",
+    "gate_version",
+    "decision",
+    "decided_on",
+    "predecessor_binding",
+    "implementation_bindings",
+    "compatibility_evidence",
+    "review_record",
+    "conditions",
+    "authorized_execution",
+    "required_controls",
+    "reporting_boundary",
+    "non_authorizations",
+    "next_gate"
+  ],
+  "properties": {
+    "gate_schema": {"const": "0.1.0"},
+    "gate_id": {"const": "FET-001-DEVELOPMENT-EXECUTION"},
+    "trial_id": {"const": "FET-001"},
+    "gate_version": {"const": "0.1.0"},
+    "decision": {"const": "OPEN_FOR_OFFLINE_PUBLIC_DEVELOPMENT_EXECUTION"},
+    "decided_on": {"const": "2026-08-07"},
+    "predecessor_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pull_request",
+        "gate_source_commit",
+        "gate_merge_commit",
+        "gate_record_sha256",
+        "post_merge_check"
+      ],
+      "properties": {
+        "pull_request": {"$ref": "#/$defs/pullRequest"},
+        "gate_source_commit": {"$ref": "#/$defs/commit"},
+        "gate_merge_commit": {"$ref": "#/$defs/commit"},
+        "gate_record_sha256": {"$ref": "#/$defs/sha256"},
+        "post_merge_check": {"$ref": "#/$defs/actionsRun"}
+      }
+    },
+    "implementation_bindings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "track_id",
+          "system_id",
+          "repository_url",
+          "pull_request",
+          "base_commit",
+          "implementation_source_commit",
+          "implementation_merge_commit",
+          "post_merge_check",
+          "source_manifest_sha256",
+          "context_envelope_schema_sha256"
+        ],
+        "properties": {
+          "track_id": {"enum": ["PRODUCER", "CONSUMER"]},
+          "system_id": {
+            "enum": ["agent-context-integrity", "agent-authority-integrity"]
+          },
+          "repository_url": {"type": "string", "pattern": "^https://github\\.com/"},
+          "pull_request": {"$ref": "#/$defs/pullRequest"},
+          "base_commit": {"$ref": "#/$defs/commit"},
+          "implementation_source_commit": {"$ref": "#/$defs/commit"},
+          "implementation_merge_commit": {"$ref": "#/$defs/commit"},
+          "post_merge_check": {"$ref": "#/$defs/actionsRun"},
+          "source_manifest_sha256": {"$ref": "#/$defs/sha256"},
+          "context_envelope_schema_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "compatibility_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transport_interface",
+        "context_envelope_schema_sha256",
+        "producer_fixture_sha256",
+        "development_cases_sha256",
+        "mutations_sha256",
+        "report_schema_sha256",
+        "producer_exported_case_ids",
+        "development_case_count",
+        "mutation_count"
+      ],
+      "properties": {
+        "transport_interface": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": {"const": "federated-context-envelope"},
+            "version": {"const": "0.1"}
+          }
+        },
+        "context_envelope_schema_sha256": {"$ref": "#/$defs/sha256"},
+        "producer_fixture_sha256": {"$ref": "#/$defs/sha256"},
+        "development_cases_sha256": {"$ref": "#/$defs/sha256"},
+        "mutations_sha256": {"$ref": "#/$defs/sha256"},
+        "report_schema_sha256": {"$ref": "#/$defs/sha256"},
+        "producer_exported_case_ids": {"$ref": "#/$defs/nonEmptyStrings"},
+        "development_case_count": {"const": 8},
+        "mutation_count": {"const": 10}
+      }
+    },
+    "review_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundary",
+        "producer",
+        "consumer",
+        "independent_review",
+        "blocking_ambiguities",
+        "acceptance_basis"
+      ],
+      "properties": {
+        "boundary": {"type": "string", "minLength": 1},
+        "producer": {"$ref": "#/$defs/reviewCounts"},
+        "consumer": {"$ref": "#/$defs/reviewCounts"},
+        "independent_review": {"const": false},
+        "blocking_ambiguities": {"type": "array", "maxItems": 0},
+        "acceptance_basis": {"const": "OWNER_MERGES_WITH_NO_RECORDED_BLOCKERS"}
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "producer_merged",
+        "consumer_merged",
+        "post_merge_ci_passed",
+        "interface_content_address_equal",
+        "public_cases_implemented",
+        "mutation_probes_implemented",
+        "blocking_ambiguities_resolved"
+      ],
+      "properties": {
+        "producer_merged": {"const": true},
+        "consumer_merged": {"const": true},
+        "post_merge_ci_passed": {"const": true},
+        "interface_content_address_equal": {"const": true},
+        "public_cases_implemented": {"const": true},
+        "mutation_probes_implemented": {"const": true},
+        "blocking_ambiguities_resolved": {"const": true}
+      }
+    },
+    "authorized_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_class",
+        "offline",
+        "synthetic_only",
+        "public_cases_only",
+        "real_external_effects",
+        "network_during_execution",
+        "permitted_actions"
+      ],
+      "properties": {
+        "execution_class": {"const": "PUBLIC_DEVELOPMENT"},
+        "offline": {"const": true},
+        "synthetic_only": {"const": true},
+        "public_cases_only": {"const": true},
+        "real_external_effects": {"const": false},
+        "network_during_execution": {"const": false},
+        "permitted_actions": {"$ref": "#/$defs/nonEmptyStrings"}
+      }
+    },
+    "required_controls": {"$ref": "#/$defs/nonEmptyStrings"},
+    "reporting_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report_schema",
+        "report_schema_sha256",
+        "result_class",
+        "aggregate_score_permitted",
+        "allowed_claim_if_supported",
+        "known_limits"
+      ],
+      "properties": {
+        "report_schema": {"const": "trials/FET-001/schemas/report.v0.1.schema.json"},
+        "report_schema_sha256": {"$ref": "#/$defs/sha256"},
+        "result_class": {"const": "PUBLIC_DEVELOPMENT_CONFORMANCE"},
+        "aggregate_score_permitted": {"const": false},
+        "allowed_claim_if_supported": {"type": "string", "minLength": 1},
+        "known_limits": {"$ref": "#/$defs/nonEmptyStrings"}
+      }
+    },
+    "non_authorizations": {"$ref": "#/$defs/nonEmptyStrings"},
+    "next_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_id", "state", "opens_when"],
+      "properties": {
+        "gate_id": {"const": "FET-001-INDEPENDENT-EVALUATION"},
+        "state": {"const": "closed"},
+        "opens_when": {"$ref": "#/$defs/nonEmptyStrings"}
+      }
+    }
+  },
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pullRequest": {
+      "type": "string",
+      "pattern": "^https://github\\.com/.+/pull/[0-9]+$"
+    },
+    "actionsRun": {
+      "type": "string",
+      "pattern": "^https://github\\.com/.+/actions/runs/[0-9]+$"
+    },
+    "reviewCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conversation_comments",
+        "reviews",
+        "review_threads",
+        "unresolved_review_threads",
+        "change_requests"
+      ],
+      "properties": {
+        "conversation_comments": {"const": 0},
+        "reviews": {"const": 0},
+        "review_threads": {"const": 0},
+        "unresolved_review_threads": {"const": 0},
+        "change_requests": {"const": 0}
+      }
+    },
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

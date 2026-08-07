@@ -240,7 +240,7 @@ def test_gate_rejects_authorized_scope_overreach(tmp_path: Path) -> None:
     assert "authorized scope exceeds the gate" in "\n".join(validate_catalog(catalog))
 
 
-def test_development_execution_gate_remains_closed(tmp_path: Path) -> None:
+def test_implementation_record_keeps_its_successor_gate_closed(tmp_path: Path) -> None:
     catalog = copy_catalog(tmp_path)
     path = catalog / "gates/FET-001/implementation-gate.v0.1.json"
     gate = json.loads(path.read_text(encoding="utf-8"))
@@ -260,3 +260,135 @@ def test_gate_rejects_blocking_ambiguity(tmp_path: Path) -> None:
     write_json(path, gate)
 
     assert "unresolved blocking ambiguity" in "\n".join(validate_catalog(catalog))
+
+
+def test_development_gate_binds_predecessor_record(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["predecessor_binding"]["gate_record_sha256"] = "0" * 64
+    write_json(path, gate)
+
+    errors = "\n".join(validate_catalog(catalog))
+    assert "development-execution predecessor binding mismatch" in errors
+    assert "development-execution predecessor digest mismatch" in errors
+
+
+def test_development_gate_fails_closed_when_bound_artifact_is_missing(
+    tmp_path: Path,
+) -> None:
+    catalog = copy_catalog(tmp_path)
+    (catalog / "trials/FET-001/schemas/report.v0.1.schema.json").unlink()
+
+    assert (
+        "missing FET-001 development-execution artifact: "
+        "trials/FET-001/schemas/report.v0.1.schema.json"
+    ) in "\n".join(validate_catalog(catalog))
+
+
+def test_development_gate_binds_implementation_commits(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    producer = next(
+        item
+        for item in gate["implementation_bindings"]
+        if item["track_id"] == "PRODUCER"
+    )
+    producer["implementation_source_commit"] = "0" * 40
+    write_json(path, gate)
+
+    assert "development-execution producer binding mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_development_gate_requires_one_interface_identity(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    consumer = next(
+        item
+        for item in gate["implementation_bindings"]
+        if item["track_id"] == "CONSUMER"
+    )
+    consumer["context_envelope_schema_sha256"] = "0" * 64
+    write_json(path, gate)
+
+    errors = "\n".join(validate_catalog(catalog))
+    assert "development-execution consumer binding mismatch" in errors
+    assert "development-execution interface identity mismatch" in errors
+
+
+def test_development_gate_binds_public_case_digest(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["compatibility_evidence"]["development_cases_sha256"] = "0" * 64
+    write_json(path, gate)
+
+    errors = "\n".join(validate_catalog(catalog))
+    assert "development-execution compatibility mismatch" in errors
+    assert "local digest mismatch: development_cases_sha256" in errors
+
+
+def test_development_gate_rejects_live_authorized_scope(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["authorized_execution"]["permitted_actions"].append(
+        "Run a live model evaluation."
+    )
+    write_json(path, gate)
+
+    assert "development-execution authorized scope exceeds gate" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_development_gate_preserves_non_authorizations(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["non_authorizations"].remove("Live model or provider API calls")
+    write_json(path, gate)
+
+    assert "development-execution non-authorization mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_development_gate_rejects_blocking_ambiguity(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["review_record"]["blocking_ambiguities"] = ["Unresolved harness rule"]
+    write_json(path, gate)
+
+    assert "development-execution has blocking ambiguity" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_development_gate_forbids_aggregate_score(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["reporting_boundary"]["aggregate_score_permitted"] = True
+    write_json(path, gate)
+
+    assert "development-execution aggregate score is prohibited" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_independent_evaluation_gate_remains_closed(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "gates/FET-001/development-execution-gate.v0.1.json"
+    gate = json.loads(path.read_text(encoding="utf-8"))
+    gate["next_gate"]["state"] = "open"
+    write_json(path, gate)
+
+    assert "independent-evaluation gate is not closed" in "\n".join(
+        validate_catalog(catalog)
+    )
