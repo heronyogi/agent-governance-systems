@@ -12,6 +12,16 @@ system may silently promote another system's information into authority.
 > digests, and post-merge checks. It is an organizational specification, not a
 > runtime orchestrator, safety result, ontology, or certification program.
 
+## Start here
+
+| Goal | Read |
+| --- | --- |
+| Understand the federation boundary | [`CHARTER.md`](CHARTER.md) and [`CONTRACTS.md`](CONTRACTS.md) |
+| Inspect registered systems and exact source bindings | [`registry/systems.v0.1.json`](registry/systems.v0.1.json) |
+| See how repositories relate without sharing authority | [`docs/system-map.md`](docs/system-map.md) |
+| Review or reproduce FET-001 | [`trials/FET-001/README.md`](trials/FET-001/README.md) and [`results/FET-001/public-development-v0.1/README.md`](results/FET-001/public-development-v0.1/README.md) |
+| Propose a bounded system | [`docs/adoption.md`](docs/adoption.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md) |
+
 ## Active systems
 
 | System | Governing question | Repository |
