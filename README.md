@@ -35,10 +35,11 @@ reporting, and a content-addressed review packet.
 
 FET-001 now has separately merged offline producer and consumer
 implementations. Its [gate records](gates/FET-001/README.md) bind those exact
-commits and open only execution of the frozen public development cases and
-active mutations. No development report, independent or blind case set,
-experimental result, or live-model run exists yet. Independent and live
-evaluation remain closed.
+commits and authorize only execution of the frozen public development cases and
+active mutations. The [public development result](results/FET-001/public-development-v0.1/README.md)
+reports conformance within that bounded scope. It is not independent, blind,
+live, experimental, or production evidence. Independent and live evaluation
+remain closed.
 
 ## Federation rules
 
@@ -58,6 +59,7 @@ the [system map](docs/system-map.md), and the [adoption guide](docs/adoption.md)
 ```text
 manifests/                 candidate public system declarations
 registry/                  validated catalog membership
+results/                   bounded, evidence-bound trial reports
 schemas/                   strict manifest and registry schemas
 scripts/validate_catalog.py cross-artifact conformance checks
 tests/                     schema and federation invariant tests

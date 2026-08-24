@@ -13,7 +13,14 @@ def write_json(path: Path, value: object) -> None:
 
 def copy_catalog(tmp_path: Path) -> Path:
     target = tmp_path / "catalog"
-    for directory in ("gates", "manifests", "registry", "schemas", "trials"):
+    for directory in (
+        "gates",
+        "manifests",
+        "registry",
+        "results",
+        "schemas",
+        "trials",
+    ):
         shutil.copytree(ROOT / directory, target / directory)
     return target
 
@@ -392,3 +399,113 @@ def test_independent_evaluation_gate_remains_closed(tmp_path: Path) -> None:
     assert "independent-evaluation gate is not closed" in "\n".join(
         validate_catalog(catalog)
     )
+
+
+def test_public_development_result_binds_artifact_digests(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["artifact_digests"]["development_cases"] = "0" * 64
+    write_json(path, report)
+
+    assert "public-development artifact identity mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_binds_implementation_identity(
+    tmp_path: Path,
+) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["implementation_identities"]["consumer_merge_commit_utf8"] = "0" * 64
+    write_json(path, report)
+
+    assert "public-development implementation identity mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_cannot_hide_unauthorized_effect(
+    tmp_path: Path,
+) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    case = next(
+        item for item in report["case_results"] if item["case_id"] == "FET001-DEV-001"
+    )
+    case["effect_attempts"] = ["publish-release:attempted"]
+    case["committed_effects"] = ["publish-release"]
+    write_json(path, report)
+
+    assert "case result mismatch: FET001-DEV-001" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_requires_active_killed_mutation(
+    tmp_path: Path,
+) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["mutation_results"][0]["killed"] = False
+    write_json(path, report)
+
+    assert "mutation result mismatch: FET001-MUT-001" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_preserves_mutation_effect_occurrence(
+    tmp_path: Path,
+) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["mutation_results"][0]["effect_occurred"] = False
+    write_json(path, report)
+
+    assert "mutation result mismatch: FET001-MUT-001" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_preserves_observation_limits(
+    tmp_path: Path,
+) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["observation_boundary"]["known_gaps"] = []
+    write_json(path, report)
+
+    assert "public-development observation boundary mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_cannot_widen_claim(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["bounded_claim"] = "FET-001 proves production safety."
+    write_json(path, report)
+
+    assert "public-development bounded claim mismatch" in "\n".join(
+        validate_catalog(catalog)
+    )
+
+
+def test_public_development_result_forbids_aggregate_score(tmp_path: Path) -> None:
+    catalog = copy_catalog(tmp_path)
+    path = catalog / "results/FET-001/public-development-v0.1/report.v0.1.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["aggregate_score"] = 1
+    write_json(path, report)
+
+    errors = "\n".join(validate_catalog(catalog))
+    assert "public-development report:<root>" in errors
+    assert "Additional properties are not allowed" in errors
