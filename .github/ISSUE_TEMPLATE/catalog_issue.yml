@@ -1,0 +1,35 @@
+name: Catalog or contract issue
+description: Report a reproducible inconsistency in a manifest, registry, gate, trial, or federation rule.
+title: "[Catalog]: "
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, personal data, sealed cases, or private derivation machinery.
+  - type: input
+    id: revision
+    attributes:
+      label: Exact revision
+      description: Commit SHA and affected artifact path.
+    validations:
+      required: true
+  - type: textarea
+    id: invariant
+    attributes:
+      label: Governing invariant
+      description: Cite the charter, contract, schema, or gate rule.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Reproducible inconsistency
+      description: Explain the conflicting records or validation behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Proposed bounded correction
+      description: Describe the smallest change that restores an exact public boundary.
+    validations:
+      required: true
